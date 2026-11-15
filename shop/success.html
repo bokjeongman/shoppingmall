@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>결제 성공 — THREAD & CO.</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="result">
+    <h1 id="title">결제 확인 중…</h1>
+    <p id="msg"></p>
+    <dl id="info"></dl>
+    <a class="btn" href="index.html">쇼핑 계속하기</a>
+  </main>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const orderId = q.get("orderId"), paymentKey = q.get("paymentKey"), amount = Number(q.get("amount"));
+    const $ = (s) => document.querySelector(s);
+    const pending = JSON.parse(sessionStorage.getItem("pendingOrder") || "null");
+
+    $("#info").innerHTML = `<dt>주문번호</dt><dd>${orderId}</dd><dt>결제금액</dt><dd>${amount.toLocaleString("ko-KR")}원</dd>`;
+
+    (async () => {
+      // 1) 금액 검증: 결제 요청 시 저장한 금액과 리다이렉트 쿼리의 amount가 같아야 해요.
+      if (!pending || pending.orderId !== orderId || pending.amount !== amount) {
+        $("#title").textContent = "결제 금액이 일치하지 않아요";
+        $("#msg").textContent = "주문 정보가 달라 결제를 승인하지 않았어요.";
+        return;
+      }
+      // 2) 결제 승인은 시크릿 키가 필요해서 서버(server.js)에서 처리해요.
+      try {
+        const res = await fetch("/api/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId, paymentKey, amount }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "승인 실패");
+        $("#title").textContent = "결제가 완료됐어요 🎉";
+        $("#msg").textContent = data.orderName + " · " + data.method;
+        localStorage.removeItem("cart");
+        sessionStorage.removeItem("pendingOrder");
+      } catch (e) {
+        $("#title").textContent = "결제 인증은 성공, 승인 대기";
+        $("#msg").textContent = "승인 서버(node server.js)가 실행 중이어야 결제가 완료돼요. (" + e.message + ")";
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>결제 실패 — THREAD & CO.</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="result">
+    <h1>결제에 실패했어요</h1>
+    <dl id="info"></dl>
+    <a class="btn" href="index.html">장바구니로 돌아가기</a>
+  </main>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    document.querySelector("#info").innerHTML =
+      `<dt>코드</dt><dd>${esc(q.get("code"))}</dd><dt>사유</dt><dd>${esc(q.get("message"))}</dd><dt>주문번호</dt><dd>${esc(q.get("orderId"))}</dd>`;
+  </script>
+</body>
+</html>

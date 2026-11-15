@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>THREAD & CO. — 의류 샵</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+</head>
+<body>
+  <div class="topbar">전국 무료배송 · 5만원 이상 구매 시 &nbsp;|&nbsp; 테스트 결제 모드 (실제 결제되지 않아요)</div>
+
+  <header class="header">
+    <a class="logo" href="#top">THREAD &amp; CO.</a>
+    <nav class="nav">
+      <a href="#shop" data-filter="all">전체</a>
+      <a href="#shop" data-filter="top">상의</a>
+      <a href="#shop" data-filter="bottom">하의</a>
+      <a href="#shop" data-filter="outer">아우터</a>
+    </nav>
+    <button class="cart-btn" id="open-cart" aria-label="장바구니 열기">장바구니 <span id="cart-count">0</span></button>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-text">
+      <p class="eyebrow">NEW SEASON</p>
+      <h1>매일 입고 싶은<br />기본의 힘</h1>
+      <a class="btn" href="#shop">컬렉션 보기</a>
+    </div>
+    <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1400&q=80" alt="의류 매장 컬렉션" />
+  </section>
+
+  <section class="shop" id="shop">
+    <h2>컬렉션</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <footer class="footer">
+    <p>© THREAD &amp; CO. · 데모 쇼핑몰 · 결제는 토스페이먼츠 테스트 환경입니다.</p>
+    <p>이미지: Unsplash</p>
+  </footer>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h3>장바구니</h3>
+      <button id="close-cart" aria-label="닫기">✕</button>
+    </div>
+    <div class="drawer-body" id="cart-items"></div>
+    <div class="drawer-foot">
+      <div class="total"><span>합계</span><strong id="cart-total">0원</strong></div>
+      <button class="btn full" id="checkout-btn">토스페이먼츠로 결제하기</button>
+      <p class="err" id="pay-error" hidden></p>
+    </div>
+  </aside>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
