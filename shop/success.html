@@ -19,7 +19,14 @@
     const $ = (s) => document.querySelector(s);
     const pending = JSON.parse(sessionStorage.getItem("pendingOrder") || "null");
 
-    $("#info").innerHTML = `<dt>주문번호</dt><dd>${orderId}</dd><dt>결제금액</dt><dd>${amount.toLocaleString("ko-KR")}원</dd>`;
+    // 쿼리 값은 신뢰할 수 없으므로 innerHTML 대신 textContent로 출력 (XSS 방지)
+    const addRow = (label, value) => {
+      const dt = document.createElement("dt"), dd = document.createElement("dd");
+      dt.textContent = label; dd.textContent = value;
+      $("#info").append(dt, dd);
+    };
+    addRow("주문번호", orderId ?? "");
+    addRow("결제금액", (Number.isFinite(amount) ? amount : 0).toLocaleString("ko-KR") + "원");
 
     (async () => {
       // 1) 금액 검증: 결제 요청 시 저장한 금액과 리다이렉트 쿼리의 amount가 같아야 해요.
