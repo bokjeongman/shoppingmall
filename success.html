@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>결제 성공 — THREAD & CO.</title>
+  <title>결제 성공 — XORBSHOP</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -27,6 +27,11 @@
     };
     addRow("주문번호", orderId ?? "");
     addRow("결제금액", (Number.isFinite(amount) ? amount : 0).toLocaleString("ko-KR") + "원");
+    const ship = pending && pending.shipping;
+    if (ship) {
+      addRow("받는 분", `${ship.name} (${ship.phone})`);
+      addRow("배송지", `(${ship.zip}) ${ship.addr} ${ship.detail}`);
+    }
 
     (async () => {
       // 1) 금액 검증: 결제 요청 시 저장한 금액과 리다이렉트 쿼리의 amount가 같아야 해요.

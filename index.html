@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>THREAD & CO. — 의류 샵</title>
+  <title>XORBSHOP — 의류 샵</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://js.tosspayments.com/v2/standard"></script>
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
   <div class="topbar">전국 무료배송 · 5만원 이상 구매 시 &nbsp;|&nbsp; 테스트 결제 모드 (실제 결제되지 않아요)</div>
 
   <header class="header">
-    <a class="logo" href="#top">THREAD &amp; CO.</a>
+    <a class="logo" href="#top">XORBSHOP</a>
     <nav class="nav">
       <a href="#shop" data-filter="all">전체</a>
       <a href="#shop" data-filter="top">상의</a>
@@ -36,7 +37,7 @@
   </section>
 
   <footer class="footer">
-    <p>© THREAD &amp; CO. · 데모 쇼핑몰 · 결제는 토스페이먼츠 테스트 환경입니다.</p>
+    <p>© XORBSHOP · 데모 쇼핑몰 · 결제는 토스페이먼츠 테스트 환경입니다.</p>
     <p>이미지: Unsplash</p>
   </footer>
 
@@ -48,6 +49,17 @@
     </div>
     <div class="drawer-body" id="cart-items"></div>
     <div class="drawer-foot">
+      <form class="ship" id="ship-form" autocomplete="on" novalidate>
+        <h4>배송지 정보</h4>
+        <input id="ship-name" name="name" placeholder="받는 분 이름" autocomplete="name" maxlength="30" required />
+        <input id="ship-phone" name="phone" type="tel" placeholder="연락처 (예: 010-1234-5678)" autocomplete="tel" maxlength="13" inputmode="numeric" required />
+        <div class="ship-zip">
+          <input id="ship-zip" name="zip" placeholder="우편번호" readonly required />
+          <button type="button" class="btn small" id="addr-search">주소 검색</button>
+        </div>
+        <input id="ship-addr" name="addr" placeholder="기본 주소 (주소 검색을 눌러주세요)" readonly required />
+        <input id="ship-detail" name="detail" placeholder="상세 주소 (동/호수 등)" autocomplete="address-line2" maxlength="100" required />
+      </form>
       <div class="total"><span>합계</span><strong id="cart-total">0원</strong></div>
       <button class="btn full" id="checkout-btn">토스페이먼츠로 결제하기</button>
       <p class="err" id="pay-error" hidden></p>

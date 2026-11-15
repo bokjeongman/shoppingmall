@@ -75,16 +75,53 @@ $("#close-cart").onclick = () => toggleDrawer(false);
 $("#overlay").onclick = () => toggleDrawer(false);
 
 // ---------- 토스페이먼츠 결제 (결제창형, 비회원 결제) ----------
+// ---------- 배송지 주소 (카카오 우편번호 서비스) ----------
+function openPostcode() {
+  if (!window.daum || !window.daum.Postcode) { showErr(Object.assign(new Error("주소 검색 서비스를 불러오지 못했어요. 새로고침 후 다시 시도해 주세요."), { plain: true })); return; }
+  new daum.Postcode({
+    oncomplete: (d) => {
+      // 도로명 주소 우선, 없으면 지번 주소 사용
+      const base = d.userSelectedType === "R" ? d.roadAddress : d.jibunAddress;
+      $("#ship-zip").value = d.zonecode;
+      $("#ship-addr").value = base;
+      $("#ship-zip").classList.remove("bad"); $("#ship-addr").classList.remove("bad");
+      $("#ship-detail").focus();
+    },
+  }).open();
+}
+$("#addr-search").onclick = openPostcode;
+$("#ship-zip").onclick = openPostcode;
+$("#ship-addr").onclick = openPostcode;
+$("#ship-phone").oninput = (e) => {
+  const n = e.target.value.replace(/\D/g, "").slice(0, 11);
+  e.target.value = n.length < 4 ? n : n.length < 8 ? n.replace(/(\d{3})(\d+)/, "$1-$2") : n.replace(/(\d{3})(\d{3,4})(\d+)/, "$1-$2-$3");
+};
+
+function getShipping() {
+  const v = (id) => $(id).value.trim();
+  const ship = { name: v("#ship-name"), phone: v("#ship-phone"), zip: v("#ship-zip"), addr: v("#ship-addr"), detail: v("#ship-detail") };
+  const bad = [];
+  if (ship.name.length < 2) bad.push("#ship-name");
+  if (!/^01[016789]-\d{3,4}-\d{4}$/.test(ship.phone)) bad.push("#ship-phone");
+  if (!ship.zip || !ship.addr) bad.push("#ship-zip", "#ship-addr");
+  if (!ship.detail) bad.push("#ship-detail");
+  document.querySelectorAll(".ship input").forEach((el) => el.classList.remove("bad"));
+  bad.forEach((id) => $(id).classList.add("bad"));
+  if (bad.length) { $(bad[0]).focus(); throw Object.assign(new Error("배송지 정보를 올바르게 입력해 주세요."), { plain: true }); }
+  return ship;
+}
+
 $("#checkout-btn").onclick = async () => {
   const err = $("#pay-error");
   err.hidden = true;
   try {
+    const shipping = getShipping();
     const items = cart.map((i) => ({ ...PRODUCTS.find((p) => p.id === i.id), qty: i.qty }));
     // 금액은 상품 목록에서 다시 계산합니다. (서버에서도 승인 시 금액을 검증해야 해요)
     const amount = items.reduce((s, i) => s + i.price * i.qty, 0);
     const orderName = items[0].name + (items.length > 1 ? ` 외 ${items.length - 1}건` : "");
     const orderId = "ORD_" + crypto.randomUUID().replace(/-/g, "");
-    sessionStorage.setItem("pendingOrder", JSON.stringify({ orderId, amount }));
+    sessionStorage.setItem("pendingOrder", JSON.stringify({ orderId, amount, shipping }));
 
     const tossPayments = TossPayments(window.TOSS_CLIENT_KEY);
     const widgets = tossPayments.widgets({ customerKey: TossPayments.ANONYMOUS });
@@ -106,7 +143,7 @@ $("#checkout-btn").onclick = async () => {
 };
 function showErr(e) {
   const err = $("#pay-error");
-  err.textContent = "결제 오류: " + (e.message || e.code || e);
+  err.textContent = (e.plain ? "" : "결제 오류: ") + (e.message || e.code || e);
   err.hidden = false;
 }
 
