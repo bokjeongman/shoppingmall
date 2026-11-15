@@ -13,6 +13,7 @@
 - 배송지 입력 (카카오 우편번호 서비스로 주소 검색, 이름/연락처/상세주소 검증)
 - 토스페이먼츠 결제창 연동 및 서버 측 결제 승인
 - 결제 성공 / 실패 페이지
+- SEO/AEO/GEO: 메타·OG 태그, JSON-LD(Organization/WebSite/상품 목록/FAQ), FAQ 섹션, `robots.txt`, `sitemap.xml`, `llms.txt`
 
 ## 폴더 구조
 

@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const SECRET = process.env.TOSS_SECRET_KEY || "";
-const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml" };
 
 http.createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/api/confirm") {
